@@ -12,7 +12,7 @@ public interface GuestRepository {
 
     boolean update(Guest guest) throws DataException;
 
-    Guest findById(int id);
+    Guest findByEmail(String email);
 
 
 }

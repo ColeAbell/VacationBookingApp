@@ -38,9 +38,9 @@ public class GuestFileRepository implements GuestRepository {
     }
 
     @Override
-    public Guest findById(int id) {
+    public Guest findByEmail(String email) {
         return findAll().stream()
-                .filter(i -> i.getGuest_id() == id)
+                .filter(i -> i.getEmail().equalsIgnoreCase(email))
                 .findFirst()
                 .orElse(null);
     }
