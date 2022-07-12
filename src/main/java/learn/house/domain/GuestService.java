@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class GuestService {
 
-    private GuestRepository repository;
+    private final GuestRepository repository;
 
     public GuestService(GuestRepository repository){
         this.repository = repository;

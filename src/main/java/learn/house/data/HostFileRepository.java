@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class HostFileRepository implements HostRepository {
 
@@ -136,19 +137,25 @@ public class HostFileRepository implements HostRepository {
             host.setPostal_code(fields[7]);
             host.setStandard_rate(new BigDecimal(fields[8]).setScale(2, RoundingMode.HALF_UP));
             host.setWeekend_rate(new BigDecimal(fields[9]).setScale(2, RoundingMode.HALF_UP));
+            return host;
 
         }
         return null;
     }
 
     private Host getUniqueId(Host host) {
-        boolean unique = false;
-        String id = "";
-        do {
-            id = java.util.UUID.randomUUID().toString();
-            String finalId = id;
-            unique = findAll().stream().anyMatch(g -> g.getId().equalsIgnoreCase(finalId));
-        } while (!unique);
+        UUID uuid;
+        String id;
+        boolean duplicate = false;
+        do{
+            uuid = UUID.randomUUID();
+            id = String.valueOf(uuid);
+            for(Host h : findAll()){
+                if(h.getId().equalsIgnoreCase(id)){
+                    duplicate = true;
+                }
+            }
+        } while(duplicate);
         host.setId(id);
         return host;
     }
