@@ -1,10 +1,11 @@
 package learn.house.models;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Host {
 
-    private int id;
+    private String id;
 
     private String last_name;
 
@@ -16,32 +17,35 @@ public class Host {
 
     private String city;
 
+    private String state;
+
     private String postal_code;
 
     private BigDecimal standard_rate;
 
     private BigDecimal weekend_rate;
 
-    public Host(String last_name, String email, String phone, String address, String city, String postal_code, BigDecimal standard_rate, BigDecimal weekend_rate) {
+    public Host(String last_name, String email, String phone, String address, String city, String state, String postal_code, BigDecimal standard_rate, BigDecimal weekend_rate) {
         this.last_name = last_name;
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.city = city;
+        this.state = state;
         this.postal_code = postal_code;
-        this.standard_rate = standard_rate;
-        this.weekend_rate = weekend_rate;
+        this.standard_rate = standard_rate.setScale(2, RoundingMode.HALF_UP);
+        this.weekend_rate = weekend_rate.setScale(2, RoundingMode.HALF_UP);
     }
 
     public Host(){
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -107,5 +111,13 @@ public class Host {
 
     public void setWeekend_rate(BigDecimal weekend_rate) {
         this.weekend_rate = weekend_rate;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

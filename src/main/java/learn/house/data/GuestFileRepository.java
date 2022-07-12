@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuestFileRepository implements GuestRepository{
+public class GuestFileRepository implements GuestRepository {
 
     public static final String delimiter = ",";
 
@@ -14,7 +14,9 @@ public class GuestFileRepository implements GuestRepository{
 
     private final String filePath;
 
-    public GuestFileRepository(String filePath) {this.filePath = filePath;}
+    public GuestFileRepository(String filePath) {
+        this.filePath = filePath;
+    }
 
     @Override
     public List<Guest> findAll() {
@@ -132,6 +134,7 @@ public class GuestFileRepository implements GuestRepository{
         }
         return null;
     }
+
 
 
 
