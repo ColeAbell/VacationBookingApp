@@ -2,6 +2,7 @@ package learn.house.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Reservation {
 
@@ -64,5 +65,22 @@ public class Reservation {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation reservation = (Reservation) o;
+        return id == reservation.id &&
+                guest_id == reservation.guest_id &&
+                Objects.equals(start_date, reservation.start_date) &&
+                Objects.equals(end_date, reservation.end_date) &&
+                Objects.equals(total, reservation.total);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, guest_id, start_date, end_date, total);
     }
 }

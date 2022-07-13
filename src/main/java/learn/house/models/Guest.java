@@ -1,5 +1,7 @@
 package learn.house.models;
 
+import java.util.Objects;
+
 public class Guest {
 
     private int guest_id;
@@ -72,5 +74,23 @@ public class Guest {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Guest guest = (Guest) o;
+        return guest_id == guest.guest_id &&
+                Objects.equals(first_name, guest.first_name) &&
+                Objects.equals(last_name, guest.last_name) &&
+                Objects.equals(email, guest.email) &&
+                Objects.equals(phone, guest.phone) &&
+                Objects.equals(state, guest.state);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(guest_id, first_name, last_name, email, phone, state);
     }
 }
