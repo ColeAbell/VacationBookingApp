@@ -49,6 +49,9 @@ public class ReservationFileRepository implements ReservationRepository{
 
     @Override
     public Reservation add(Reservation reservation, String hostId) throws DataException {
+        if(reservation == null){
+            return null;
+        }
         List<Reservation> all = findByHost(hostId);
         int nextId = all.stream()
                 .mapToInt(Reservation::getId)
@@ -122,6 +125,7 @@ public class ReservationFileRepository implements ReservationRepository{
             reservation.setEnd_date(LocalDate.parse(fields[2]));
             reservation.setGuest_id(Integer.parseInt(fields[3]));
             reservation.setTotal(new BigDecimal(fields[4]).setScale(2, RoundingMode.HALF_UP));
+            return reservation;
         }
         return null;
     }
