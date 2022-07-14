@@ -4,7 +4,9 @@ import learn.house.data.DataException;
 import learn.house.data.GuestRepository;
 import learn.house.models.Guest;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GuestService {
 
@@ -22,6 +24,14 @@ public class GuestService {
         }
         result.setPayload(repository.findByEmail(email));
         return result;
+    }
+
+    public List<String> getEmails(){
+        return repository.findAll().stream().map(g -> g.getEmail()).collect(Collectors.toList());
+    }
+
+    public List<String> getPhoneNumbers(){
+        return repository.findAll().stream().map(g -> g.getPhone()).collect(Collectors.toList());
     }
 
     public Result<Guest> add(Guest guest) throws DataException{

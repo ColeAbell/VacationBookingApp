@@ -97,7 +97,7 @@ public class ConsoleIO {
             if(pattern.matcher(email).matches()){
                 return email;
             }
-            println("Email is not in valid standard format");
+            println("Email is not in valid format");
         }
     }
 
@@ -105,17 +105,49 @@ public class ConsoleIO {
         while(true){
             String number = readRequiredString(prompt);
             try{
-                Integer.parseInt(number);
+                Long.parseLong(number);
             }
             catch(NumberFormatException ex){
-                println("Phone number cannot contain non-numbers");
+                println("Phone number cannot contain letters or symbols");
                 continue;
             }
             if(number.length() != 10){
                 println("Phone number must be 10 digits");
                 continue;
             }
-            return number;
+            return String.format("(%s) %s", number.substring(0, 3), number.substring(3));
+        }
+    }
+
+    public int readInt(String prompt) {
+        while (true) {
+            try {
+                return Integer.parseInt(readRequiredString(prompt));
+            } catch (NumberFormatException ex) {
+                println("Not a valid number");
+            }
+        }
+    }
+
+    public int readInt(String prompt, int min, int max) {
+        while (true) {
+            int result = readInt(prompt);
+            if (result >= min && result <= max) {
+                return result;
+            }
+            println(String.format("Number must be between %s and %s", min, max));
+        }
+    }
+
+    public boolean readBoolean(String prompt) {
+        while (true) {
+            String input = readRequiredString(prompt).toLowerCase();
+            if (input.equals("y")) {
+                return true;
+            } else if (input.equals("n")) {
+                return false;
+            }
+            println("[INVALID] Please enter 'y' or 'n'.");
         }
     }
 }
