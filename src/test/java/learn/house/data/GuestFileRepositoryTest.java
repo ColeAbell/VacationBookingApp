@@ -39,7 +39,7 @@ class GuestFileRepositoryTest {
 
     @Test
     void add() throws DataException{
-        Guest test = new Guest("Bob", "The first", "bob@bob.com", "506", "FL");
+        Guest test = new Guest(0, "Bob", "The first", "bob@bob.com", "506", "FL");
         repository.add(test);
         assertNull(repository.add(null));
         assertEquals(3, repository.findAll().size());
@@ -49,7 +49,7 @@ class GuestFileRepositoryTest {
 
     @Test
     void update() throws DataException{
-        Guest test = new Guest("Bob", "The first", "bob@bob.com", "506", "FL");
+        Guest test = new Guest(0,"Bob", "The first", "bob@bob.com", "506", "FL");
         test.setGuest_id(1);
         assertFalse(repository.update(null));
         assertTrue(repository.update(test));

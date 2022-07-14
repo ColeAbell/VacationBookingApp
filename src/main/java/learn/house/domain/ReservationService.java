@@ -25,7 +25,7 @@ public class ReservationService {
 
     public List<Reservation> checkForDoubleBook(String hostId, LocalDate start, LocalDate end){
         List<Reservation> current = findByHost(hostId);
-        List<Reservation> doubleBook = current.stream().filter(r -> (start.isAfter(r.getStart_date()) && start.isBefore(r.getEnd_date())) || (end.isAfter(r.getStart_date()) && end.isBefore(r.getEnd_date()))).collect(Collectors.toList());
+        List<Reservation> doubleBook = current.stream().filter(r -> (start.isEqual(r.getStart_date()) || start.isEqual(r.getEnd_date())) || (end.isEqual(r.getStart_date()) || end.isEqual(r.getEnd_date())) || (start.isAfter(r.getStart_date()) && start.isBefore(r.getEnd_date())) || (end.isAfter(r.getStart_date()) && end.isBefore(r.getEnd_date()))).collect(Collectors.toList());
         return doubleBook;
     }
 

@@ -16,12 +16,13 @@ public class Guest {
 
     private String state;
 
-    public Guest(String first, String last, String email, String phone, String state){
+    public Guest(int guest_id, String first, String last, String email, String phone, String state){
         this.first_name = first;
         this.last_name = last;
         this.email = email;
         this.phone = phone;
         this.state = state;
+        this.guest_id = guest_id;
     }
 
     public Guest(){
