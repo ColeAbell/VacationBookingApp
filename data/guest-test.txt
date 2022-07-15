@@ -2,4 +2,4 @@ guest_id,first_name,last_name,email,phone,state
 1,Bob,The first,bob@bob.com,(444) 4444444,FL
 2,Olympie,Gecks,ogecks1@dagondesign.com,(202) 2528316,DC
 3,Cole,Abell,cole@cole.org,(407) 2872398,FL
-4,Tim,Tom,tim@tim.com,(909) 8987767,mn
+4,Tim,Tom,tim@tim.com,(909) 8987767,MN

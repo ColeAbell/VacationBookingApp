@@ -94,4 +94,8 @@ public class Guest {
     public int hashCode() {
         return Objects.hash(guest_id, first_name, last_name, email, phone, state);
     }
+
+    public String fullName(){
+        return this.getFirst_name() + " " + this.getLast_name();
+    }
 }

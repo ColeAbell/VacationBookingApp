@@ -26,6 +26,10 @@ public class GuestService {
         return result;
     }
 
+    public Guest findById(int id){
+        return repository.findAll().stream().filter(g -> g.getGuest_id() == id).findFirst().get();
+    }
+
     public List<String> getEmails(){
         return repository.findAll().stream().map(g -> g.getEmail()).collect(Collectors.toList());
     }

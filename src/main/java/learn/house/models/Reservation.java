@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Reservation {
+public class Reservation implements Comparable<Reservation>{
 
     private int id;
 
@@ -82,5 +82,10 @@ public class Reservation {
     @Override
     public int hashCode() {
         return Objects.hash(id, guest_id, start_date, end_date, total);
+    }
+
+    @Override
+    public int compareTo(Reservation r){
+        return this.start_date.compareTo(r.start_date);
     }
 }

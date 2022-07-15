@@ -1,6 +1,7 @@
 package learn.house.ui;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -44,28 +45,24 @@ public class ConsoleIO {
         }
     }
 
-    public BigDecimal getBigDecimal(String prompt) {
+    public BigDecimal readBigDecimal(String prompt) {
+        BigDecimal value;
         while (true) {
             String input = readRequiredString(prompt);
             try {
-                return new BigDecimal(input);
+                value = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP);
             } catch (NumberFormatException ex) {
                 println("Input must be a number");
+                continue;
             }
+            if (value.compareTo(BigDecimal.ZERO) > 0) {
+                return value;
+            }
+            println("Value must be greater than zero");
         }
     }
 
-    public BigDecimal readBigDecimal(String prompt) {
-        while (true) {
-            BigDecimal result = readBigDecimal(prompt);
-            if (result.compareTo(BigDecimal.ZERO) > 0) {
-                return result;
-            }
-            println(String.format("Value must be greater than zero"));
-        }
-    }
-
-    public LocalDate readLocalDate(String prompt) {
+    public LocalDate readStartDate(String prompt) {
         println("Enter a date in MM/dd/yyyy format.");
         while (true) {
             String input = readRequiredString(prompt);
@@ -74,6 +71,31 @@ public class ConsoleIO {
                 date = LocalDate.parse(input, formatter);
                 if(date.isBefore(LocalDate.now())){
                     println("Date cannot be in the past");
+                    continue;
+                }
+                else{
+                    return date;
+                }
+            } catch (DateTimeParseException ex) {
+                println("Invalid value, please enter a date in MM/dd/yyyy format.");
+                continue;
+            }
+        }
+    }
+
+    public LocalDate readEndDate(String prompt, LocalDate start) {
+        println("Enter a date in MM/dd/yyyy format.");
+        while (true) {
+            String input = readRequiredString(prompt);
+            LocalDate date;
+            try {
+                date = LocalDate.parse(input, formatter);
+                if(date.isBefore(LocalDate.now())){
+                    println("Date cannot be in the past");
+                    continue;
+                }
+                else if(date.isBefore(start) || date.equals(start)){
+                    println("End date must be after start date");
                     continue;
                 }
                 else{
@@ -148,6 +170,24 @@ public class ConsoleIO {
                 return false;
             }
             println("[INVALID] Please enter 'y' or 'n'.");
+        }
+    }
+
+    public String readPostal(String prompt){
+        while(true){
+            String number = readRequiredString(prompt);
+            try{
+                Long.parseLong(number);
+            }
+            catch(NumberFormatException ex){
+                println("Postal code cannot contain letters or symbols");
+                continue;
+            }
+            if(number.length() != 5){
+                println("Postal code must be 5 digits");
+                continue;
+            }
+            return number;
         }
     }
 }

@@ -6,7 +6,9 @@ import learn.house.data.HostRepository;
 import learn.house.models.Guest;
 import learn.house.models.Host;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class HostService {
 
@@ -24,6 +26,14 @@ public class HostService {
         }
         result.setPayload(repository.findByEmail(email));
         return result;
+    }
+
+    public List<String> getEmails(){
+        return repository.findAll().stream().map(g -> g.getEmail()).collect(Collectors.toList());
+    }
+
+    public Host findById(String id){
+        return repository.findAll().stream().filter(g -> g.getId().equalsIgnoreCase(id)).findFirst().get();
     }
 
     public Result<Host> add(Host host) throws DataException {
