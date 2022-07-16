@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -73,6 +74,7 @@ public class Controller {
                     updateReservation();
                     break;
                 case DELETE_RESERVATION:
+                    deleteReservation();
                     break;
             }
         } while (option != MainMenuOption.EXIT);
@@ -189,8 +191,12 @@ public class Controller {
             break;
         }while(true);
         Host host = result.getPayload();
-        view.io.println("Host Profile:");
+        view.displayHeader("Host Profile:");
         view.io.printf("Last Name: %s%nEmail: %s%nPhone: %s%nAddress: %s%nCity: %s%nState: %s%nPostal: %s%nStandard Rate: %s%nWeekend Rate: %s%n", host.getLast_name(), host.getEmail(), host.getPhone(), host.getAddress(), host.getCity(), host.getState(), host.getPostal_code(), host.getStandard_rate(), host.getWeekend_rate());
+        if(view.io.readBoolean("View Host's Reservations? [y/n]:")){
+            view.displayHeader("Host's Reservations");
+            displayReservation(reservationService.findByHost(host.getId()));
+        }
         view.enterToContinue();
     }
 
@@ -267,6 +273,11 @@ public class Controller {
         reservation.setStart_date(start);
         reservation.setEnd_date(end);
         reservation.setTotal(getTotal(start, end, host));
+        view.displayHeader("Summary Of Created Reservation");
+        view.io.printf("Start Date: %s%nEnd Date: %s%nTotal: %s%n", start, end, reservation.getTotal());
+        if(!view.io.readBoolean("Please Confirm [y/n]:")){
+            return;
+        }
         Result<Reservation> result = reservationService.add(reservation, host.getId());
         if (!result.isSuccess()) {
             view.displayStatus(false, result.getErrorMessages());
@@ -308,9 +319,36 @@ public class Controller {
             }
             break;
         }
-        List<Reservation> reservations = reservationService.findByHost(host.getId());
+        Result<Guest> guestResult;
+        Guest guest;
+        while (true) {
+            do {
+                guestResult = guestService.findByEmail(view.io.readEmail("Please provide the email of the guest for the reservation you want to edit:"));
+                if (!guestResult.isSuccess()) {
+                    view.displayStatus(false, guestResult.getErrorMessages());
+                    if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                        return;
+                    } else {
+                        continue;
+                    }
+                }
+                break;
+            } while (true);
+            guest = guestResult.getPayload();
+            view.io.println("Guest Profile:");
+            view.io.printf("Name: %s %s%nEmail: %s%nPhone: %s%nState: %s%n", guest.getFirst_name(), guest.getLast_name(), guest.getEmail(), guest.getPhone(), guest.getState());
+            if (!view.io.readBoolean("Is this the guest you want? [y/n]:")) {
+                if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                    return;
+                }
+                continue;
+            }
+            break;
+        }
+        Guest finalGuest = guest;
+        List<Reservation> reservations = reservationService.findByHost(host.getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
         if(reservations.size() == 0){
-            System.out.println("Host has no active reservations");
+            System.out.println("Host has no active reservations for that guest");
             view.enterToContinue();
             return;
         }
@@ -376,6 +414,88 @@ public class Controller {
         }
         view.enterToContinue();
 
+
+    }
+
+    public void deleteReservation() throws DataException{
+        Reservation reservation = new Reservation();
+        Result<Host> hostResult;
+        Host host;
+        while (true) {
+            do {
+                hostResult = hostService.findByEmail(view.io.readEmail("Please provide the email of the host for the reservation you want to cancel:"));
+                if (!hostResult.isSuccess()) {
+                    view.displayStatus(false, hostResult.getErrorMessages());
+                    if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                        return;
+                    } else {
+                        continue;
+                    }
+                }
+                break;
+            } while (true);
+            host = hostResult.getPayload();
+            view.io.println("Host Profile:");
+            view.io.printf("Last Name: %s%nEmail: %s%nPhone: %s%nAddress: %s%nCity: %s%nState: %s%nPostal: %s%nStandard Rate: %s%nWeekend Rate: %s%n", host.getLast_name(), host.getEmail(), host.getPhone(), host.getAddress(), host.getCity(), host.getState(), host.getPostal_code(), host.getStandard_rate(), host.getWeekend_rate());
+            if (!view.io.readBoolean("Is this the host you want? [y/n]:")) {
+                if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                    return;
+                }
+                continue;
+            }
+            break;
+        }
+        Result<Guest> guestResult;
+        Guest guest;
+        while (true) {
+            do {
+                guestResult = guestService.findByEmail(view.io.readEmail("Please provide the email of the guest for the reservation you want to cancel:"));
+                if (!guestResult.isSuccess()) {
+                    view.displayStatus(false, guestResult.getErrorMessages());
+                    if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                        return;
+                    } else {
+                        continue;
+                    }
+                }
+                break;
+            } while (true);
+            guest = guestResult.getPayload();
+            view.io.println("Guest Profile:");
+            view.io.printf("Name: %s %s%nEmail: %s%nPhone: %s%nState: %s%n", guest.getFirst_name(), guest.getLast_name(), guest.getEmail(), guest.getPhone(), guest.getState());
+            if (!view.io.readBoolean("Is this the guest you want? [y/n]:")) {
+                if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                    return;
+                }
+                continue;
+            }
+            break;
+        }
+        Guest finalGuest = guest;
+        List<Reservation> reservations = reservationService.findByHost(host.getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
+        if(reservations.size() == 0){
+            System.out.println("Host has no active reservations for that guest");
+            view.enterToContinue();
+            return;
+        }
+        int smallest = reservations.stream().mapToInt(r -> r.getId()).min().getAsInt();
+        int largest = reservations.stream().mapToInt(r -> r.getId()).max().getAsInt();
+        displayReservation(reservations);
+        int choice = view.io.readInt(String.format("Choose a reservation ID [%s-%s]:", smallest, largest), smallest, largest);
+        reservation = reservations.stream().filter(r -> r.getId() == choice).findFirst().get();
+        view.displayHeader("The Following Reservation Will Be Canceled");
+        view.io.printf("Start Date: %s%nEnd Date: %s%nTotal: %s%n", reservation.getStart_date(), reservation.getEnd_date(), reservation.getTotal());
+        if(!view.io.readBoolean("Are You Sure You Want To Cancel? [y/n]:")){
+            return;
+        }
+        Result<Reservation> deleteResult = reservationService.delete(reservation, host.getId());
+        if (!deleteResult.isSuccess()) {
+            view.displayStatus(false, deleteResult.getErrorMessages());
+        } else {
+            String successMessage = String.format("Reservation For Host %s Deleted.", host.getLast_name());
+            view.displayStatus(true, successMessage);
+        }
+        view.enterToContinue();
 
     }
 
