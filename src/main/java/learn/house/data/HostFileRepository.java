@@ -78,6 +78,26 @@ public class HostFileRepository implements HostRepository {
     }
 
     @Override
+    public boolean delete(Host host) throws DataException{
+        List<Host> all = findAll();
+        if(host == null){
+            return false;
+        }
+        for (int i = 0; i < all.size(); i++) {
+            if(all.get(i).getId().equalsIgnoreCase(host.getId())){
+                all.remove(i);
+                writeAll(all);
+                File hostFile = new File("./data/reservation_data_test/" + host.getId() + ".csv");
+                if(hostFile.exists()){
+                    hostFile.delete();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public Host findByEmail(String email) {
         return findAll().stream()
                 .filter(i -> i.getEmail().equalsIgnoreCase(email))

@@ -48,4 +48,12 @@ class GuestServiceTest {
         assertEquals(theGuest, service.update(theGuest).getPayload());
     }
 
+    @Test
+    void delete() throws DataException{
+        Guest test = new Guest(1, "Test", "Testington", "test@test.com", "8767804356", "TX");
+        assertEquals(test, service.delete(test).getPayload());
+        test.setGuest_id(9);
+        assertEquals("Guest to be deleted does not exist", service.delete(test).getErrorMessages().get(0));
+    }
+
 }

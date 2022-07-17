@@ -6,21 +6,25 @@ public enum MainMenuOption {
 
     UPDATE_GUEST (2, "Update Guest Profile"),
 
-    VIEW_GUEST (3, "View A Guest Profile"),
+    VIEW_GUEST (3, "View A Guest's Profile"),
 
-    ADD_HOST (4, "Add A Host Profile"),
+    DELETE_GUEST (4, "Delete A Guest Profile"),
 
-    UPDATE_HOST (5, "Update A Host Profile"),
+    ADD_HOST (5, "Add A Host Profile"),
 
-    VIEW_HOST (6, "View A Host Profile"),
+    UPDATE_HOST (6, "Update A Host Profile"),
 
-    MAKE_RESERVATION (7, "Make A Reservation"),
+    VIEW_HOST (7, "View A Host Profile / Reservations"),
 
-    UPDATE_RESERVATION (8, "Edit A Reservation"),
+    DELETE_HOST (8, "Delete A Host Profile"),
 
-    DELETE_RESERVATION (9, "Cancel A Reservation"),
+    MAKE_RESERVATION (9, "Make A Reservation"),
 
-    EXIT (10, "Exit");
+    UPDATE_RESERVATION (10, "Edit A Reservation"),
+
+    DELETE_RESERVATION (11, "Cancel A Reservation"),
+
+    EXIT (12, "Exit");
 
     private int value;
     private String message;

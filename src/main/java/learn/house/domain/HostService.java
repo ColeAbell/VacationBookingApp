@@ -5,6 +5,7 @@ import learn.house.data.GuestRepository;
 import learn.house.data.HostRepository;
 import learn.house.models.Guest;
 import learn.house.models.Host;
+import learn.house.models.Reservation;
 
 import java.util.List;
 import java.util.Objects;
@@ -84,6 +85,20 @@ public class HostService {
         result.setPayload(host);
         return result;
 
+    }
+
+    public Result<Host> delete(Host host) throws DataException{
+        Result<Host> result = new Result<>();
+        boolean outcome = repository.delete(host);
+        if(!outcome){
+            result.addErrorMessage("Host to be deleted does not exist");
+        }
+        result.setPayload(host);
+        return result;
+    }
+
+    public List<Host> findAll(){
+        return repository.findAll();
     }
 
     public Result<Host> validate(Host host){

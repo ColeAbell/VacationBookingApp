@@ -45,6 +45,14 @@ public class GuestRepositoryDouble implements GuestRepository{
     }
 
     @Override
+    public boolean delete(Guest guest) throws DataException{
+        if(findById(guest.getGuest_id()) == null){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public Guest findByEmail(String email) {
         return findAll().stream()
                 .filter(i -> i.getEmail().equalsIgnoreCase(email))

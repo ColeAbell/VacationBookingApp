@@ -56,4 +56,12 @@ class GuestFileRepositoryTest {
         assertEquals("Bob", repository.findAll().get(0).getFirst_name());
 
     }
+
+    @Test
+    void delete() throws DataException{
+        Guest test = repository.findAll().get(0);
+        assertEquals(true, repository.delete(test));
+        Guest testTwo = new Guest(0,"Bob", "The first", "bob@bob.com", "506", "FL");
+        assertEquals(false, repository.delete(testTwo));
+    }
 }

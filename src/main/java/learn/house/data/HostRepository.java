@@ -13,4 +13,6 @@ public interface HostRepository {
     boolean update(Host host) throws DataException;
 
     Host findByEmail(String email);
+
+    boolean delete(Host host) throws DataException;
 }

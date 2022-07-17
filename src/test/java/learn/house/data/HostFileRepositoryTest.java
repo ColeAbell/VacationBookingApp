@@ -53,6 +53,14 @@ class HostFileRepositoryTest {
     }
 
     @Test
+    void delete() throws DataException{
+        Host test = new Host("Paul", "bob@bob.com", "506", "Test lane", "Test City", "FL", "40098", new BigDecimal(30.30).setScale(2, RoundingMode.HALF_UP), new BigDecimal(40.50).setScale(2, RoundingMode.HALF_UP));
+        test.setId("3edda6bc-ab95-49a8-8962-d50b53f84b15");
+        assertFalse(repository.delete(null));
+        assertTrue(repository.delete(test));
+    }
+
+    @Test
     void findByEmail() {
         assertEquals("TX", repository.findByEmail("eyearnes0@sfgate.com").getState());
         assertNull(repository.findByEmail("bob"));

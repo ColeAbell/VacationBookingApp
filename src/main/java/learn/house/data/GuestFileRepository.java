@@ -66,7 +66,7 @@ public class GuestFileRepository implements GuestRepository {
 
         return guest;
     }
-
+    @Override
     public boolean update(Guest guest) throws DataException {
 
         if (guest == null) {
@@ -84,7 +84,18 @@ public class GuestFileRepository implements GuestRepository {
 
         return false;
     }
-
+    @Override
+    public boolean delete(Guest guest) throws DataException{
+        List<Guest> all = findAll();
+        for (int i = 0; i < all.size(); i++) {
+            if(all.get(i).getGuest_id() == guest.getGuest_id()){
+                all.remove(i);
+                writeAll(all);
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected void writeAll(List<Guest> guests) throws DataException {
         try (PrintWriter writer = new PrintWriter(filePath)) {

@@ -3,6 +3,7 @@ package learn.house.domain;
 import learn.house.data.DataException;
 import learn.house.data.GuestRepository;
 import learn.house.models.Guest;
+import learn.house.models.Host;
 
 import java.util.List;
 import java.util.Objects;
@@ -75,6 +76,16 @@ public class GuestService {
             }
         }
         repository.update(guest);
+        result.setPayload(guest);
+        return result;
+    }
+
+    public Result<Guest> delete(Guest guest) throws DataException{
+        Result<Guest> result = new Result<>();
+        boolean outcome = repository.delete(guest);
+        if(!outcome){
+            result.addErrorMessage("Guest to be deleted does not exist");
+        }
         result.setPayload(guest);
         return result;
     }

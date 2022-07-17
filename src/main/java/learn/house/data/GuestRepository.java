@@ -14,5 +14,7 @@ public interface GuestRepository {
 
     Guest findByEmail(String email);
 
+    boolean delete(Guest guest) throws DataException;
+
 
 }

@@ -53,4 +53,18 @@ public class HostRepositoryDouble implements HostRepository{
         }
         return false;
     }
+
+    @Override
+    public boolean delete(Host host) throws DataException{
+        if (host == null){
+            return false;
+        }
+        List<Host> all = findAll();
+        for (int i = 0; i < all.size(); i++) {
+            if(host.getId().equalsIgnoreCase(all.get(i).getId())){
+                return true;
+            }
+        }
+        return false;
+    }
 }

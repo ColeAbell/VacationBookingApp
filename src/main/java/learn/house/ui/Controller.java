@@ -58,6 +58,9 @@ public class Controller {
                 case VIEW_GUEST:
                     viewGuest();
                     break;
+                case DELETE_GUEST:
+                    deleteGuest();
+                    break;
                 case ADD_HOST:
                     addHost();
                     break;
@@ -66,6 +69,9 @@ public class Controller {
                     break;
                 case VIEW_HOST:
                     viewHost();
+                    break;
+                case DELETE_HOST:
+                    deleteHost();
                     break;
                 case MAKE_RESERVATION:
                     addReservation();
@@ -135,6 +141,23 @@ public class Controller {
         Guest guest = result.getPayload();
         view.io.println("Guest Profile:");
         view.io.printf("Name: %s %s%nEmail: %s%nPhone: %s%nState: %s%n", guest.getFirst_name(), guest.getLast_name(), guest.getEmail(), guest.getPhone(), guest.getState());
+        if(!view.io.readBoolean("View Guest Reservations? [y/n]:")){
+            return;
+        }
+        List <Host> hosts = hostService.findAll();
+        List <Reservation> future = new ArrayList<>();
+        List<Reservation> past = new ArrayList<>();
+        for (int i = 0; i < hosts.size(); i++) {
+            Guest finalGuest = guest;
+            List<Reservation> reservations = reservationService.findByHost(hosts.get(i).getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
+            past.addAll(reservations.stream().filter(r -> r.getStart_date().isBefore(LocalDate.now())).collect(Collectors.toList()));
+            future.addAll(reservations.stream().filter(r -> r.getStart_date().compareTo(LocalDate.now()) >= 0).collect(Collectors.toList()));
+        }
+        view.displayHeader("Upcoming Guest Reservations");
+        displayReservation(future);
+        view.displayHeader("Past Guest Reservations");
+        displayReservation(past);
+        System.out.println();
         view.enterToContinue();
     }
 
@@ -194,9 +217,14 @@ public class Controller {
         view.displayHeader("Host Profile:");
         view.io.printf("Last Name: %s%nEmail: %s%nPhone: %s%nAddress: %s%nCity: %s%nState: %s%nPostal: %s%nStandard Rate: %s%nWeekend Rate: %s%n", host.getLast_name(), host.getEmail(), host.getPhone(), host.getAddress(), host.getCity(), host.getState(), host.getPostal_code(), host.getStandard_rate(), host.getWeekend_rate());
         if(view.io.readBoolean("View Host's Reservations? [y/n]:")){
-            view.displayHeader("Host's Reservations");
-            displayReservation(reservationService.findByHost(host.getId()));
+            List<Reservation> future = reservationService.findByHost(host.getId()).stream().filter(r -> r.getStart_date().compareTo(LocalDate.now()) >= 0).collect(Collectors.toList());
+            List<Reservation> past = reservationService.findByHost(host.getId()).stream().filter(r -> r.getStart_date().compareTo(LocalDate.now()) < 0).collect(Collectors.toList());
+            view.displayHeader("Upcoming Host Reservations");
+            displayReservation(future);
+            view.displayHeader("Past Host Reservations");
+            displayReservation(past);
         }
+        System.out.println();
         view.enterToContinue();
     }
 
@@ -257,16 +285,20 @@ public class Controller {
         reservation.setGuest_id(guest.getGuest_id());
         LocalDate start;
         LocalDate end;
+        view.displayHeader("Host Currently Booked For The Following");
+        List<Reservation> future = reservationService.findByHost(host.getId()).stream().filter(r -> r.getStart_date().compareTo(LocalDate.now()) >= 0).collect(Collectors.toList());
+        displayReservation(future);
+        System.out.println();
         while(true){
-            start = view.io.readStartDate("Reservation Start Date:");
-            end = view.io.readEndDate("Reservation End Date:", start);
+            start = view.io.readStartDate("New Reservation Start Date:");
+            end = view.io.readEndDate("New Reservation End Date:", start);
             List<Reservation> conflicts = reservationService.checkForDoubleBook(host.getId(), start, end);
             if(conflicts.size() == 0 || conflicts == null){
                 break;
             }
-            view.io.println("These dates conflict with the following reservations:");
+            view.displayHeader("These Dates Conflict With The Following Reservation(s):");
             displayReservation(conflicts);
-            if(!view.io.readBoolean("Try different dates? [y/n]:")){
+            if(!view.io.readBoolean("Try Different Dates? [y/n]:")){
                 return;
             }
         }
@@ -472,9 +504,9 @@ public class Controller {
             break;
         }
         Guest finalGuest = guest;
-        List<Reservation> reservations = reservationService.findByHost(host.getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
+        List<Reservation> reservations = reservationService.findByHost(host.getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id() && r.getStart_date().compareTo(LocalDate.now()) >= 0).collect(Collectors.toList());
         if(reservations.size() == 0){
-            System.out.println("Host has no active reservations for that guest");
+            System.out.println("Host has no upcoming reservations for that guest");
             view.enterToContinue();
             return;
         }
@@ -495,14 +527,105 @@ public class Controller {
             String successMessage = String.format("Reservation For Host %s Deleted.", host.getLast_name());
             view.displayStatus(true, successMessage);
         }
+        System.out.println();
         view.enterToContinue();
+
+    }
+
+    public void deleteHost() throws DataException{
+        Result<Host> hostResult;
+        Host host;
+        while (true) {
+            do {
+                hostResult = hostService.findByEmail(view.io.readEmail("Please provide the email of the host to be deleted:"));
+                if (!hostResult.isSuccess()) {
+                    view.displayStatus(false, hostResult.getErrorMessages());
+                    if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                        return;
+                    } else {
+                        continue;
+                    }
+                }
+                break;
+            } while (true);
+            host = hostResult.getPayload();
+            view.io.println("Host Profile:");
+            view.io.printf("Last Name: %s%nEmail: %s%nPhone: %s%nAddress: %s%nCity: %s%nState: %s%nPostal: %s%nStandard Rate: %s%nWeekend Rate: %s%n", host.getLast_name(), host.getEmail(), host.getPhone(), host.getAddress(), host.getCity(), host.getState(), host.getPostal_code(), host.getStandard_rate(), host.getWeekend_rate());
+            if (!view.io.readBoolean("Is this the host you want? [y/n]:")) {
+                if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                    return;
+                }
+                continue;
+            }
+            if(!view.io.readBoolean("Warning: Deleting A Host Will Also Delete Their Reservation Data. Continue? [y/n]:")){
+                return;
+            }
+            break;
+        }
+        Result <Host> deleteResult = hostService.delete(host);
+        if (!deleteResult.isSuccess()) {
+            view.displayStatus(false, deleteResult.getErrorMessages());
+        } else {
+            String successMessage = String.format("Host %s  Successfully Deleted.", host.getLast_name());
+            view.displayStatus(true, successMessage);
+        }
+        view.enterToContinue();
+    }
+
+    public void deleteGuest() throws DataException{
+        Result<Guest> guestResult;
+        Guest guest;
+        while (true) {
+            do {
+                guestResult = guestService.findByEmail(view.io.readEmail("Please Provide The Email Of The Guest To Be Deleted:"));
+                if (!guestResult.isSuccess()) {
+                    view.displayStatus(false, guestResult.getErrorMessages());
+                    if (!view.io.readBoolean("Try Another Email? [y/n]:")) {
+                        return;
+                    } else {
+                        continue;
+                    }
+                }
+                break;
+            } while (true);
+            guest = guestResult.getPayload();
+            view.io.println("Guest Profile:");
+            view.io.printf("Name: %s %s%nEmail: %s%nPhone: %s%nState: %s%n", guest.getFirst_name(), guest.getLast_name(), guest.getEmail(), guest.getPhone(), guest.getState());
+            if (!view.io.readBoolean("Is this the guest you want? [y/n]:")) {
+                if (!view.io.readBoolean("Try another email? [y/n]:")) {
+                    return;
+                }
+                continue;
+            }
+            if(!view.io.readBoolean("Warning: Deleting A Guest Profile Also Deletes Their Reservation Data. Continue? [y/n]:")){
+                return;
+            }
+            break;
+        }
+        List <Host> hosts = hostService.findAll();
+        for (int i = 0; i < hosts.size(); i++) {
+            Guest finalGuest = guest;
+            List<Reservation> reservations = reservationService.findByHost(hosts.get(i).getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
+            while(reservations.size() > 0){
+                reservationService.delete(reservations.get(0), hosts.get(i).getId());
+                reservations = reservationService.findByHost(hosts.get(i).getId()).stream().filter(r -> r.getGuest_id() == finalGuest.getGuest_id()).collect(Collectors.toList());
+            }
+        }
+        Result <Guest> deleteResult = guestService.delete(guest);
+        if (!deleteResult.isSuccess()) {
+            view.displayStatus(false, deleteResult.getErrorMessages());
+        } else {
+            String successMessage = String.format("Guest %s Successfully Deleted.", guest.fullName());
+            view.displayStatus(true, successMessage);
+        }
+        view.enterToContinue();
+
 
     }
 
     public void displayReservation(List<Reservation> reservations){
         Collections.sort(reservations);
         if (reservations.size() == 0) {
-            System.out.println();
             System.out.println("No reservations found.");
         } else {
             String rowFormat = "| %-5s | %-10s | %-10s | %-15s | %-7s |%n";
