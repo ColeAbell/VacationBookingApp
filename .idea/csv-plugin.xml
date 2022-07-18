@@ -3,6 +3,27 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/data/guests.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/hosts.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/reservation_data/3edda6bc-ab95-49a8-8962-d50b53f84b15.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/data/reservation_data_test/17ece931-92b5-4dbf-8860-35474afa67c4.csv">
           <value>
             <Attribute>
@@ -39,6 +60,13 @@
           </value>
         </entry>
         <entry key="/data/reservation_data_test/reservation-seed.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/reservations/2e72f86c-b8fe-4265-b4f1-304dea8762db.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

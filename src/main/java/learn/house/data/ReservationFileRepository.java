@@ -86,9 +86,9 @@ public class ReservationFileRepository implements ReservationRepository{
                 writeAll(all, hostId);
                 all = findByHost(hostId);
                 for (int j = 0; j < all.size(); j++) {
-                    int thisId = all.get(i).getId();
+                    int thisId = all.get(j).getId();
                     if(thisId > id){
-                        Reservation adjusted = all.get(i);
+                        Reservation adjusted = all.get(j);
                         adjusted.setId(thisId - 1);
                         all.set(j, adjusted);
                     }

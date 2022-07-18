@@ -285,7 +285,7 @@ public class Controller {
         reservation.setGuest_id(guest.getGuest_id());
         LocalDate start;
         LocalDate end;
-        view.displayHeader("Host Currently Booked For The Following");
+        view.displayHeader("Host's Upcoming Bookings / Potential Conflicts");
         List<Reservation> future = reservationService.findByHost(host.getId()).stream().filter(r -> r.getStart_date().compareTo(LocalDate.now()) >= 0).collect(Collectors.toList());
         displayReservation(future);
         System.out.println();
@@ -512,9 +512,18 @@ public class Controller {
         }
         int smallest = reservations.stream().mapToInt(r -> r.getId()).min().getAsInt();
         int largest = reservations.stream().mapToInt(r -> r.getId()).max().getAsInt();
+        view.displayHeader("Choose An Upcoming Reservation To Cancel");
         displayReservation(reservations);
-        int choice = view.io.readInt(String.format("Choose a reservation ID [%s-%s]:", smallest, largest), smallest, largest);
-        reservation = reservations.stream().filter(r -> r.getId() == choice).findFirst().get();
+        int choice;
+        while(true) {
+            choice = view.io.readInt(String.format("Choose a reservation ID:", smallest, largest), smallest, largest);
+            int finalChoice = choice;
+            if(reservations.stream().anyMatch(r -> r.getId() == finalChoice)){
+                break;
+            }
+        }
+        int finalChoice1 = choice;
+        reservation = reservations.stream().filter(r -> r.getId() == finalChoice1).findFirst().get();
         view.displayHeader("The Following Reservation Will Be Canceled");
         view.io.printf("Start Date: %s%nEnd Date: %s%nTotal: %s%n", reservation.getStart_date(), reservation.getEnd_date(), reservation.getTotal());
         if(!view.io.readBoolean("Are You Sure You Want To Cancel? [y/n]:")){
@@ -650,7 +659,7 @@ public class Controller {
         int weekday = 0;
         int weekend = 0;
         LocalDate test = start;
-        while(test.isBefore(end) || test.equals(end)){
+        while(test.isBefore(end)){
             if(test.getDayOfWeek() == DayOfWeek.SATURDAY || test.getDayOfWeek() == DayOfWeek.SUNDAY){
                 weekend += 1;
             }
