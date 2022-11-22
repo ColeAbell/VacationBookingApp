@@ -1,5 +1,5 @@
 
-# <p align="center">Vacation Reservation App</p>
+# <p align="center">Vacation Reservation App 🏖️</p>
 
 This is an Airbnb style reservation app for a fictional company called Don't Wreck My House LLC that runs on the console. It gives the user the ability create profiles for both guests and hosts as well as to look up, modify, and delete those profiles. Each profile contains all past and upcoming reservation information as well as personal/contact information. The application also supports the creation of reservations, including providing info on conflicts, price, and the option to cancel or modify dates. All data is maintained via file writing with Java's File I/O library.
 
@@ -33,4 +33,7 @@ https://user-images.githubusercontent.com/67916002/203411025-6d49afd9-dcfb-4d5e-
 - [Java](https://www.java.com/)
 - [Spring](https://spring.io)
 - [JUnit](https://junit.org/junit5/)
-- [Maven](https://maven.apache.org/)      
+- [Maven](https://maven.apache.org/)  
+
+## 🛠️ Installation
+To run the application simply clone the repository and launch it from your IDEA via the App file located at "ReservationSystem/src/java/learn/house/App". IntelliJ is what I used for development. 
