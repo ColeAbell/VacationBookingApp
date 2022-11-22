@@ -6,6 +6,11 @@ This is an Airbnb style reservation app for a fictional company called Don't Wre
 ## 🧐 Features  / Demo
 - When the app is started, a main menu with selection options will be presented. Type in your desired action's number to get started. You will be returned to the main menu upon completing each action.
 - To add a guest profile, you will need to provide a first name, last name, valid email, and phone in ########## format. Emails are validated via Java's Regex API pattern matching. To view a guest profile and associated reservations you will need to select that option and provide a registered email address.
+
+  ‎
+
+https://user-images.githubusercontent.com/67916002/203409608-86df393e-897b-4e32-8130-da14119bf0fc.mov
+
 - To add a host profile, you will also need to validated contact information with the addition of the address, city, postal code, and state of your rental property. You will also need to provide a standard and weekend rate. To view a host and associated reservations select that option and provide the host email.
 - To create a reservation provide the desired host's email and you will then be asked to confirm the host. Repeat this process for the guest seeking the reservation. You will then be shown the host's current bookings/conflicts. Enter a start and end date for the reservation. Your dates will be checked for validity and availabilty. You will then be presented a summary of your reservation along with the total for confirmation. After confirming, your reservation is booked.
 - To edit a reservation, again enter the host's email as well as the guest's and confirm both. You will then be presented a list of active reservations for that combination. Enter the cooresponding ID of the desired reservation and hit enter. You will then be provided the option to change the start or end date, all changes will be evaluated for conflicts. You will then confirm or reject the changed reservation.
